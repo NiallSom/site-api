@@ -4,20 +4,23 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
-app.get('/api/v1/sites', (req, res) => {
-  res.send('Hello World!');
-})
-console.log(process.env.DB_PASSWORD)
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'site_api_database',
-    port: 3306
-  });
-  
-const db = mysql.createConnection(pool);
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-})
+async function main() {
+    const pool = await mysql.createPool({
+        host: 'localhost',
+        user: 'user',
+        password: 'password',
+        port: 3306
+    });
+    
+
+    app.get('/api/v1/sites', async (req, res) => {
+        const [sites] = await pool.query("SELECT * FROM site_api_database.sites");
+        res.send(sites);
+    })
+    app.listen(port, () => {
+        console.log(`Listening on port ${port}`);
+    })
+}
+
+main();
