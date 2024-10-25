@@ -19,8 +19,8 @@ async function main() {
     });
 
     app.get('/api/v1/sites/site', async (req, res) => {
-      const site = req.query.site;
-      if (!site) {
+      const site_name = req.query.site;
+      if (!site_name) {
         return res.status(400).json({
             error: 'Missing required parameters: site_name is required'
         });
@@ -29,7 +29,7 @@ async function main() {
       res.send(site_specific);
     });
 
-    app.post('/api/v1/sites/site', async (req, res) => {
+    app.post('/api/v1/sites/insert', async (req, res) => {
         const site_name = req.query.site_name;
         const power = req.query.power;
         if (!site_name || !power) {
@@ -37,7 +37,16 @@ async function main() {
                 error: 'Missing required parameters: site_name and power are required'
                 });
         }
-        await pool.query(`INSERT INTO site_api_database.sites (site_name, power) VALUES (?, ?);`, [site_name, power]);
+        try {
+            await pool.query(
+                `INSERT INTO site_api_database.sites (site_name, power) VALUES (?, ?);`,
+                [site_name, power]
+            );
+            res.status(201).json({ message: 'Site inserted successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Failed to insert site' });
+        }
     });
 
     app.patch('/api/v1/sites/update', async (req, res) => {
@@ -51,6 +60,17 @@ async function main() {
         await pool.query(`UPDATE site_api_database.sites SET power = ? WHERE site_name = ?;`, [power, site_name]);
         res.status(200).json({ message: 'Site updated successfully' });
     });
+    
+    app.delete('/api/v1/sites/delete', async (req, res) => {
+        const site_name = req.query.site_name;
+        if (!site_name) {
+            return res.status(400).json({
+                error: 'Missing required parameters: site_name is required'
+            });
+        }
+        await pool.query('DELETE FROM site_api_database.sites WHERE site_name=?', site_name);
+    });
+
     app.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });
