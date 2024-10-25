@@ -40,7 +40,7 @@ async function main() {
       await pool.query(`INSERT INTO site_api_database.sites (site_name, power) VALUES (?, ?);`, [site_name, power]);
     })
 
-    app.post('/api/v1/sites/update', async (req, res) => {
+    app.patch('/api/v1/sites/update', async (req, res) => {
         const site_name = req.query.site_name;
         const power = req.query.power;
         if (!site_name || !power) {
