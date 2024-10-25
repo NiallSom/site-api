@@ -19,7 +19,8 @@ async function main() {
     });
 
     app.get('/api/v1/sites/site', async (req, res) => {
-      const site_name = req.query.site;
+      const site_name = req.query.site_name;
+      console.log(site_name);
       if (!site_name) {
         return res.status(400).json({
             error: 'Missing required parameters: site_name is required'
