@@ -7,10 +7,10 @@ const port = 3000;
 
 async function main() {
     const pool = await mysql.createPool({
-        host: 'localhost',
-        user: 'user',
-        password: 'password',
-        port: 3306
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT
     });
 
     app.get('/api/v1/sites', async (req, res) => {
