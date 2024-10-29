@@ -2,7 +2,6 @@ const request = require('supertest');
 const app = require('../index.js');
 const mysql = require('mysql');
 const { exec } = require('child_process');
-
 async function connectToDb() {
   const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -28,12 +27,12 @@ async function connectToDb() {
 describe('Integration Tests', () => {
   beforeAll(async () => {
     // Docker Compose up
-    await exec('docker-compose up -d');
+    await exec('docker-compose -f../docker-compose.yaml up -d');
     await connectToDb();
   });
 
   afterAll(async () => {
-    await exec('docker-compose down');
+    await exec('docker-compose -f../docker-compose.yaml down');
   });
 
   describe('GET /api/v1/sites', () => {
